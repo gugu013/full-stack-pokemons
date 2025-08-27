@@ -6,3 +6,6 @@ pokemon-backend/.env
 
 # Ignorar dependências do Frontend
 primeiro-app/node_modules
+
+# Ignorar arquivos compactados
+*.zip
