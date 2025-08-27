@@ -1,0 +1,8 @@
+# Ignorar dependências do Backend
+pokemon-backend/node_modules
+
+# Ignorar o arquivo de senhas do Backend
+pokemon-backend/.env
+
+# Ignorar dependências do Frontend
+primeiro-app/node_modules
