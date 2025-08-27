@@ -1,23 +1,12 @@
-// apiUrl.js
+// primeiro-app/apiUrl.js (VERSÃO FINAL DE PRODUÇÃO)
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 
-/**
- * WEB (PC): localhost:3000
- * EXPO GO (celular): usa o IP do QR do Expo + :3000
- * Fallback (emulador Android): 10.0.2.2:3000
- */
+// URL pública do seu servidor no Render
+const PUBLIC_API_URL = 'https://pokedex-api-gito.onrender.com';
+
 export const getApiBaseUrl = () => {
-  if (Platform.OS === 'web') {
-    return 'http://localhost:3000';
-  }
-
-  const expoConfig = Constants?.expoConfig || Constants?.manifest || {};
-  const hostUri = expoConfig.hostUri || ''; // ex.: "192.168.1.90:8081"
-  if (hostUri) {
-    const host = hostUri.split(':')[0]; // "192.168.1.90"
-    return `http://${host}:3000`;
-  }
-
-  return Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
+  // Para desenvolvimento, ainda podemos usar o localhost se quisermos,
+  // mas para o build final (APK), usaremos a URL pública.
+  // Esta lógica simples garante que o APK sempre use a URL correta.
+  return PUBLIC_API_URL;
 };
