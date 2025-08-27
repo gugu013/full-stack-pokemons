@@ -1,12 +1,14 @@
-// primeiro-app/apiUrl.js (VERSÃO FINAL DE PRODUÇÃO)
+// primeiro-app/apiUrl.js (VERSÃO FINAL PARA PRODUÇÃO)
 import { Platform } from 'react-native';
 
-// URL pública do seu servidor no Render
+// URL pública do seu servidor no Render, que já está online.
 const PUBLIC_API_URL = 'https://pokedex-api-gito.onrender.com';
 
+/**
+ * Retorna a URL base da API.
+ * Para o aplicativo final (APK), esta função sempre retornará a URL pública
+ * para garantir que ele funcione em qualquer rede (Wi-Fi, 4G, 5G).
+ */
 export const getApiBaseUrl = () => {
-  // Para desenvolvimento, ainda podemos usar o localhost se quisermos,
-  // mas para o build final (APK), usaremos a URL pública.
-  // Esta lógica simples garante que o APK sempre use a URL correta.
   return PUBLIC_API_URL;
 };
