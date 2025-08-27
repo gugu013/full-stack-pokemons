@@ -1,9 +1,9 @@
-// pokemon-backend/server.js (VERSÃO FINAL COM POSTGRESQL E SSL)
+// pokemon-backend/server.js (VERSÃO FINAL COMPLETA)
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 
-// (Opcional, mas recomendado) Para usar o arquivo .env
+// Carrega as variáveis de ambiente do arquivo .env
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +15,26 @@ const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString,
-  ssl: { // <<< ALTERAÇÃO AQUI
+  ssl: {
     rejectUnauthorized: false
   }
 });
+
+// ====== Helpers de conversão (COM A CORREÇÃO) ======
+function mapRow(row) {
+  // Esta função agora converte as strings JSON do banco de dados de volta para objetos,
+  // corrigindo os bugs de exibição no aplicativo.
+  return {
+    id: row.id,
+    name: row.name,
+    types: JSON.parse(row.types || '[]'),
+    stats: JSON.parse(row.stats || '{}'),
+    height: row.height,
+    weight: row.weight,
+    abilities: JSON.parse(row.abilities || '[]'),
+    sprites: JSON.parse(row.sprites || '{}'),
+  };
+}
 
 // ====== CRUD com PostgreSQL ======
 
@@ -26,7 +42,8 @@ const pool = new Pool({
 app.get('/api/pokemons', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM pokemons ORDER BY id ASC');
-    res.json(result.rows);
+    // Usamos o mapRow para garantir que cada item da lista seja formatado corretamente
+    res.json(result.rows.map(mapRow));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao buscar pokémons.' });
@@ -40,7 +57,7 @@ app.get('/api/pokemons/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Pokémon não encontrado' });
     }
-    res.json(result.rows[0]);
+    res.json(mapRow(result.rows[0]));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao buscar o pokémon.' });
@@ -67,7 +84,7 @@ app.post('/api/pokemons', async (req, res) => {
     ];
     
     const result = await pool.query(sql, params);
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(mapRow(result.rows[0]));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao criar o pokémon.' });
@@ -99,7 +116,7 @@ app.put('/api/pokemons/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Pokémon não encontrado' });
     }
-    res.json(result.rows[0]);
+    res.json(mapRow(result.rows[0]));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao atualizar o pokémon.' });
